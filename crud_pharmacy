@@ -1,0 +1,117 @@
+echo "Select your choice"
+echo "1.Add a pharmacy's full record"
+echo "2.Update a pharmacy's full record"
+echo "3.Delete pharmacy's record"
+read choice
+
+#------------------------------------------------------------#
+# ADD RECORDS
+if [[ "$choice" -eq 1 ]]
+then
+#Regex Check
+# location_regex="[A-Za-z0-9'\.\-\s\,]"
+location_regex="[^a-zA-Z ]+"
+pharmacist_regex="[^a-zA-Z ]+"
+
+echo "Please add the following pharmacy details"
+echo "Enter location"
+read location
+
+if [[ "$location" =~ $location_regex ]]
+then
+echo "Please enter a valid location"
+exit 1
+fi
+
+echo "Enter pharmacist"
+read pharmacist
+
+if [[ "$pharmacist" =~ $pharmacist_regex ]]
+then
+echo "Please enter a valid name"
+exit 1
+fi
+
+#ADD RECORDS
+filename=pharmacy.csv
+#Check if file ends with new line and add records appropriately
+if [ ! -s "$filename" ]; then
+  printf "%s%s%s%s%s\n" $RANDOM,"$location","$pharmacist" >> pharmacy.csv
+elif [ -z "$(tail -c 1 <"$filename")" ]; then
+  printf "%s%s%s%s%s\n" $RANDOM,"$location","$pharmacist" >> pharmacy.csv
+else
+  printf "\n%s%s%s%s%s\n" $RANDOM,"$location","$pharmacist" >> pharmacy.csv
+fi
+
+echo " Pharmacy's details added! "
+./menu
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+# UPDATE RECORDS
+elif [[ "$choice" -eq 2 ]]
+then
+# location_regex="[A-Za-z0-9'\.\-\s\,]"
+pharmacist_regex="[^a-zA-Z ]+"
+location_regex="[^a-zA-Z ]+"
+
+echo "Please add the following pharmacy details"
+
+echo "Enter pharmacy's id to edit"
+read pharmacy_id
+
+echo "Enter new pharmacy location"
+read location
+
+if [[ "$location" =~ $location_regex ]]
+then
+echo "Please enter a valid location"
+exit 1
+fi
+
+echo "Enter new pharmacist name"
+read pharmacist
+
+if [[ "$pharmacist" =~ $pharmacist_regex ]]
+then
+echo "Please enter a valid name"
+exit 1
+fi
+
+#UPDATE PHARMACY
+
+awk -F, -v pharmacy_id="$pharmacy_id" -v location="$location" -v pharmacist="$pharmacist" 'BEGIN {OFS=FS} {
+   if($1 == pharmacy_id) {
+    $2=location;
+    $3=pharmacist;
+    }
+    }1' pharmacy.csv > pharmacy.tmp && mv pharmacy.tmp pharmacy.csv
+
+echo "Pharmacy's record updated!"
+./menu
+
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#DELETE PHARMACY
+elif [[ "$choice" -eq 3 ]]
+then
+#Delete Pharmacy
+echo "Enter pharmacy's id"
+read pharmacy_id
+echo " Do you want to delete pharmacy's record for ID $pharmacy_id(y/n)"
+read c1
+if [ "$c1" = y ]
+then
+awk -v pharmacy_id=$pharmacy_id -F, '$1 != pharmacy_id' pharmacy.csv > pharmacy.tmp && mv pharmacy.tmp pharmacy.csv
+echo "Record deleted!"
+./menu
+else
+echo "Record not deleted!"
+./menu
+fi
+#---------------------------------------------
+
+else
+echo "Incorrect Entry"
+./menu
+#--------------------------------------------
+fi

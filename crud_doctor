@@ -1,0 +1,221 @@
+echo "Select your choice"
+echo "1.Add a Doctor's full record"
+echo "2.Update a Doctor's full record"
+echo "3.Delete Doctor's record"
+echo "4.Search Doctor's record"
+read choice
+
+name_regex="[^a-zA-Z ]+"
+speciality_regex="[^a-zA-Z ]+"
+experience_regex="[^0-9]+"
+doc_office_regex="[^0-9]+"
+qualification_regex="[^a-zA-Z ]+"
+email_regex='[a-z0-9]+@[a-z]+\.[a-z]{2,3}'
+contact_regex='^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#ADD RECORDS
+if [[ "$choice" -eq 1 ]]
+then
+#Regex Check
+
+
+echo "Please add the following doctor details"
+echo "Enter doctor name"
+read doc_name
+
+if [[ "$doc_name" =~ $name_regex ]]
+then
+echo "Please enter a valid name"
+exit 1
+fi
+
+echo "Enter doctor's speciality"
+read doc_speciality
+
+if [[ "$doc_speciality" =~ $speciality_regex ]]
+then
+echo "Please enter a valid speciality"
+exit 1
+fi
+
+echo "Enter doctor's office number"
+read doc_office
+
+if [[ "$doc_office" =~ $doc_office_regex ]]
+then
+echo "Please enter a valid office number"
+exit 1
+fi
+
+echo "Enter doctor's qualification"
+read doc_qualification
+
+if [[ "$doc_qualification" =~ $qualification_regex ]]
+then
+echo "Please enter a valid qualification(MBBS/MD)"
+exit 1
+fi
+
+echo "Enter doctor's email"
+read doc_email
+
+if [[ "$doc_email" =~ $email_regex ]]
+then
+echo "Please enter a valid email"
+exit 1
+fi
+
+echo "Enter doctor's contact number"
+read doc_contact_number
+
+if [[ "$doc_contact_number" =~ $phone_regex ]]
+then
+echo "Please enter a valid phone number"
+exit 1
+fi
+
+#ADD RECORDS
+filename=doctors.csv
+#Check if file ends with new line and add records appropriately
+if [ ! -s "$filename" ]; then
+  printf "%s%s%s%s%s%s%s\n" $RANDOM,$doc_name,$doc_speciality,$doc_office,$doc_qualification,$doc_email,$doc_contact_number >> doctors.csv
+elif [ -z "$(tail -c 1 <"$filename")" ]; then
+  printf "%s%s%s%s%s%s%s\n" $RANDOM,"$doc_name","$doc_speciality",$doc_office,$doc_qualification,$doc_email,$doc_contact_number >> doctors.csv
+else
+  printf "\n%s%s%s%s%s%s%s\n" $RANDOM,"$doc_name","$doc_speciality",$doc_office,$doc_qualification,$doc_email,$doc_contact_number >> doctors.csv
+fi
+
+echo " Doctor's details added! "
+./menu
+exit;
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#UPDATE RECORDS
+elif [[ "$choice" -eq 2 ]]
+then
+#Update codes
+name_regex="[^a-zA-Z ]+"
+speciality_regex="[^a-zA-Z ]+"
+qualification_regex="[^a-zA-Z ]+"
+doc_office_regex="[^a-zA-Z0-9 ]+"
+
+echo "Please add the following doctor details"
+
+echo "Enter doctor's id"
+read doc_id
+
+echo "Enter doctor name"
+read doc_name
+
+
+if [[ "$doc_name" =~ $name_regex ]]
+then
+echo "please enter a valid name"
+exit 1
+fi
+
+echo "Enter doctor's speciality"
+read doc_speciality
+
+if [[ "$doc_speciality" =~ $speciality_regex ]]
+then
+echo "please enter a valid speciality"
+exit 1
+fi
+
+echo "Enter doctor's office"
+read doc_office
+
+if [[ "$doc_office" =~ $doc_office_regex ]]
+then
+echo "please enter a valid building"
+exit 1
+fi
+
+echo "Enter doctor's qualification"
+read doc_qualification
+
+if [[ "$doc_qualification" =~ $qualification_regex ]]
+then
+echo "please enter a valid experience in years"
+exit 1
+fi
+
+echo "Enter doctor's updated email"
+read doc_email
+
+if [[ "$doc_email" =~ $email_regex ]]
+then
+echo "Please enter a valid email"
+exit 1
+fi
+
+echo "Enter doctor's updated contact number"
+read doc_contact_number
+
+if [[ "$doc_contact_number" =~ $phone_regex ]]
+then
+echo "Please enter a valid phone number"
+exit 1
+fi
+
+#UPDATE DOCTOR TABLE WITH INPUTS
+awk -F, -v doc_id=$doc_id -v doc_name="$doc_name" -v doc_speciality="$doc_speciality" -v doc_office=$doc_office -v doc_qualification="$doc_qualification" -v doc_email="$doc_email" -v doc_contact_number="$doc_contact_number" 'BEGIN {OFS=FS} {
+    if($1 == doc_id) {
+    $2=doc_name;
+    $3=doc_speciality; 
+    $4=doc_office; 
+    $5=doc_qualification;
+    $6=doc_email;
+    $7=doc_contact_number;
+    }
+    }1' doctors.csv > doctors.tmp && mv doctors.tmp doctors.csv
+
+#UPDATE DOCTOR'S NAME IN PATIENT TABLE AS WELL
+awk -F, -v doc_id=$doc_id -v doc_name="$doc_name" 'BEGIN{OFS=FS} {
+	if($5 == doc_id) {
+	$4=doc_name;
+	}
+	}1' patients.csv > patients.tmp && mv patients.tmp patients.csv	
+
+
+echo "Doctor records updated"
+./menu
+exit;
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#DELETE RECORDS
+elif [[ "$choice" -eq 3 ]]
+then
+echo "Enter doctor's id"
+read doc_id
+echo " Do you want delete doctor's record for ID $doc_id(y/n)"
+read c1
+if [ "$c1" = y ]
+then
+awk -v doc_id=$doc_id -F, '$1 != doc_id' doctors.csv > doctors.tmp && mv doctors.tmp doctors.csv
+echo "Record deleted!"
+./menu
+exit;
+else
+echo "Record not deleted!"
+./menu
+exit;
+fi
+#---------------------------------------------
+
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#DISPLAY RECORDS
+elif [[ "$choice" -eq 4 ]]
+then
+./display_doctors;
+
+else
+echo "Incorrect Entry"
+./menu
+exit;
+
+#--------------------------------------------
+fi

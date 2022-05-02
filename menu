@@ -1,0 +1,46 @@
+# creating a menu with the following options
+echo "SELECT YOUR CATEGORY:";
+echo "1. BUILDING"
+echo "2. ROOMS"
+echo "3. DOCTORS"
+echo "4. PATIENTS"
+echo "5. ADMITTED PATIENTS"
+echo "6. PHARMACY"
+
+#guests, vehicles, programs
+
+echo "99. exit"
+echo "Enter your menu choice [1-99]: "
+
+# Running a forever loop using while statement
+# This loop will run untill select the exit option.
+# User will be asked to select option again and again
+while :
+do
+
+# reading choice
+read choice
+
+# case statement is used to compare one value with the multiple cases.
+case $choice in
+  1)  echo "You have selected BUILDING"
+      ./crud_building;;
+  2)  echo "You have selected ROOMS"
+	  ./crud_room;;
+  3)  echo "You have selected DOCTORS"
+      ./crud_doctor;; 
+  4)  echo "PATIENTS=>"
+      ./crud_patient;;
+  5)  echo "ADMITTED PATIENTS=>"
+      ./crud_admitted_patients;;
+  6) echo "PHARMACY=>"
+      ./crud_pharmacy;;
+# pattern exit
+  99) echo "Exiting Menu"   
+      exit;;
+  # Default Pattern
+  *) echo "invalid option";;
+  
+esac
+  echo "Enter your menu choice [1-99]: "
+done

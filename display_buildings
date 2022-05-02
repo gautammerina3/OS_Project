@@ -1,0 +1,46 @@
+echo "Select your choice"
+echo "1. Search by address"
+echo "2. Search by building manager"
+echo "3. Search by constructed year"
+echo "4. Search by building name"
+
+echo "Enter your choice:"
+read choice
+
+if [[ $choice -eq 1 ]]
+then
+echo "Enter the address"
+read address
+
+#address validation remaining
+
+awk -F, -v address="$address" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($3 == address) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", $1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
+
+
+elif [[ $choice -eq 2 ]]
+then
+echo "Enter the building manager's name"
+read name
+
+awk -F, -v name="$name" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($5 == name) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n",$1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
+
+
+elif [[ $choice -eq 3 ]]
+then
+echo "Enter the constructed year"
+read year
+
+awk -F, -v year="$year" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($6 == year) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n",$1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
+
+
+elif [[ $choice -eq 4 ]]
+then
+echo "Enter the building name"
+read building_name
+
+awk -F, -v building_name="$building_name" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($2 == building_name) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n",$1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
+fi

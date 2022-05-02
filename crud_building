@@ -1,0 +1,204 @@
+#Regex Check
+name_regex="[^a-zA-Z ]+"
+# address_regex="[A-Za-z0-9'\.\-\s\,]"
+address_regex="[^a-zA-Z ]+"
+no_of_rooms_regex="[^0-9]+"
+doc_office_regex="[^0-9]+"
+manager_regex="[^a-zA-Z ]+"
+room_type_regex="[^a-zA-Z ]+"
+year_regex="[^0-9]+"
+status_regex="[^a-zA-Z ]+"
+department_regex="[^a-zA-Z ]+"
+
+echo "Select your choice"
+echo "1. Add a BUILDING record"
+echo "2. Update a Building's full record"
+echo "3. Delete Building's record"
+echo "4. Search for BUILDING record"
+read choice 
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+# ADD records
+if [[ "$choice" -eq 1 ]]
+then
+echo "Please add the following buildings details"
+echo "Enter building name"
+read building_name
+
+if [[ "$building_name" =~ $name_regex ]]
+then
+echo "Please enter a valid name"
+exit 1
+fi
+
+echo "Enter building's address"
+read address
+
+if [[ "$address" =~ $address_regex ]]
+then
+echo "Please enter a valid address"
+exit 1
+fi
+
+echo "Enter building's no of rooms"
+read no_of_rooms
+
+if [[ "$no_of_rooms" =~ $no_of_rooms_regex ]]
+then
+echo "Please enter a valid room number"
+exit 1
+fi
+
+echo "Enter building's manager"
+read manager
+
+if [[ "$manager" =~ $manager_regex ]]
+then
+echo "Please enter a valid manager name"
+exit 1
+fi
+
+echo "Enter constructed year"
+read manager
+
+if [[ "$year" =~ $year_regex ]]
+then
+echo "Please enter a valid year name"
+exit 1
+fi
+
+echo "Enter department"
+read department
+
+if [[ "$department" =~ $department_regex ]]
+then
+echo "Please enter a valid department"
+exit 1
+fi
+
+#ADD RECORDS
+filename=buildings.csv
+#Check if file ends with new line and add records appropriately
+if [ ! -s "$filename" ]; then
+  printf "%s%s%s%s%s\n" $RANDOM,$building_name,$address,$no_of_rooms,$manager,$department >> buildings.csv
+elif [ -z "$(tail -c 1 <"$filename")" ]; then
+  printf "%s%s%s%s%s\n" $RANDOM,"$building_name","$address",$no_of_rooms,"$manager",$department >> buildings.csv
+else
+  printf "\n%s%s%s%s%s\n" $RANDOM,"$building_name","$address",$no_of_rooms,"$manager",$department >> buildings.csv
+fi
+
+echo "Details added!"
+./menu
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#UPDATE RECORDS
+elif [[ "$choice" -eq 2 ]]
+then
+building_regex="[^a-zA-Z0-9 ]+"
+number_regex="[^0-9 ]+"
+
+echo "Please add the following building details"
+
+echo "Enter building's id"
+read building_id
+
+echo "Enter building's updated name"
+read building_name
+
+if [[ "$building_name" =~ $building_regex ]]
+then
+echo "please enter a valid name"
+exit 1
+fi
+
+echo "Enter building's updated address"
+read building_address
+
+if [[ "$building_address" =~ $building_regex ]]
+then
+echo "please enter a valid address"
+exit 1
+fi
+
+echo "Enter number of updated rooms"
+read num_of_rooms
+
+if [[ "$num_of_rooms" =~ $number_regex ]]
+then
+echo "please enter a valid number"
+exit 1
+fi
+
+echo "Enter updated building's manager name"
+read building_manager_name
+
+if [[ "$building_manager_name" =~ $building_regex ]]
+then
+echo "please enter a valid name"
+exit 1
+fi
+
+echo "Enter updated building's constructed year"
+read building_constructed_year
+
+if [[ "$building_constructed_year" =~ $number_regex ]]
+then
+echo "please enter a valid year"
+exit 1
+fi
+
+echo "Enter updated building's department"
+read building_department
+
+if [[ "$building_department" =~ $building_regex ]]
+then
+echo "please enter a valid department"
+exit 1
+fi
+
+awk -F, -v building_id="$building_id" -v building_name="$building_name" -v building_address="$building_address" -v num_of_rooms="$num_of_rooms" -v building_manager_name="$building_manager_name" -v building_constructed_year=$building_constructed_year -v building_department="$building_department" 'BEGIN {OFS=FS} {
+   if($1 == building_id) {
+    $2=building_name;
+    $3=building_address;
+    $4=num_of_rooms;
+    $5=building_manager_name;
+    $6=building_constructed_year;
+    $7=building_department;
+    }
+    }1' buildings.csv > buildings.tmp && mv buildings.tmp buildings.csv
+
+echo "Record updated!"
+./menu
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#DELETE RECORDS
+
+elif [[ "$choice" -eq 3 ]]
+then
+echo "Enter building's id"
+read building_id
+echo " Do you want to delete building's record for ID $building_id(y/n)"
+read c1
+if [ "$c1" = y ]
+then
+awk -v building_id=$building_id -F, '$1 != building_id' buildings.csv > buildings.tmp && mv buildings.tmp buildings.csv
+echo "Record deleted!"
+./menu
+else
+echo "Record not deleted!"
+./menu
+fi
+#---------------------------------------------
+
+
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#SEARCH RECORDS
+elif [[ "$choice" -eq 4 ]]
+then
+./display_buildings
+
+else
+echo "Please give valid input!"
+#--------------------------------------------
+fi

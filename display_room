@@ -1,0 +1,43 @@
+echo "Select your choice"
+echo "1. Search by room type"
+echo "2. Search by size"
+echo "3. Search by number of beds"
+echo "4. Search by building id"
+
+echo "Enter your choice:"
+read choice
+
+if [[ $choice -eq 1 ]]
+then
+echo "Enter the room type"
+read room_type
+
+awk -F, -v room_type="$room_type" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5;}; {if($2 == room_type) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s\n", $1,$2,$3,$4,$5;}}' rooms.csv
+
+elif [[ $choice -eq 2 ]]
+then
+echo "Enter the room size in sq. ft."
+read room_size
+
+awk -F, -v room_size="$room_size" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5;}; {if($3 == room_size) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s\n", $1,$2,$3,$4,$5;}}' rooms.csv
+
+
+elif [[ $choice -eq 3 ]]
+then
+echo "Enter the number of beds"
+read number_of_beds
+
+awk -F, -v number_of_beds="$number_of_beds" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5;}; {if($4 == number_of_beds) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s\n", $1,$2,$3,$4,$5;}}' rooms.csv
+
+elif [[ $choice -eq 4 ]]
+then
+echo "Enter the building id"
+read building_id
+
+awk -F, -v building_id="$building_id" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5;}; {if($5 == building_id) {
+    printf "%20s|%-20s|%-20s|%-20s|%-20s\n", $1,$2,$3,$4,$5;}}' rooms.csv
+
+fi
