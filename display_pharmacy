@@ -1,0 +1,43 @@
+#Regex Check
+# location_regex="[A-Za-z0-9'\.\-\s\,]"
+location_regex="[^a-zA-Z ]+"
+pharmacist_regex="[^a-zA-Z ]+"
+
+echo "Select your choice"
+echo "1. Search by location"
+echo "2. Search by pharmacist"
+
+echo "Enter your choice:"
+read choice
+
+if [[ $choice -eq 1 ]]
+then
+echo "Enter the location"
+read location
+
+#address validation remaining
+if [[ "$location" =~ $location_regex ]]
+then
+echo "Please enter a valid location"
+exit 1
+fi
+
+awk -F, -v location="$location" 'NR==1 {printf "%20s|%-20s|%-20s\n\n",$1,$2,$3;}; {if($2 == location) {
+    printf "%20s|%-20s|%-20s\n", $1,$2,$3;}}' pharmacy.csv
+
+
+elif [[ $choice -eq 2 ]]
+then
+echo "Enter the pharmacist"
+read pharmacist
+
+if [[ "$pharmacist" =~ $pharmacist_regex ]]
+then
+echo "Please enter a valid pharmacist"
+exit 1
+fi
+
+awk -F, -v pharmacist="$pharmacist" 'NR==1 {printf "%20s|%-20s|%-20s\n\n",$1,$2,$3;}; {if($3 == pharmacist) {
+    printf "%20s|%-20s|%-20s\n",$1,$2,$3;}}' pharmacy.csv
+
+fi

@@ -2,6 +2,7 @@ echo "Select your choice"
 echo "1.Add a pharmacy's full record"
 echo "2.Update a pharmacy's full record"
 echo "3.Delete pharmacy's record"
+echo "4.Select Pharmacy's record"
 read choice
 
 #------------------------------------------------------------#
@@ -109,6 +110,13 @@ echo "Record not deleted!"
 ./menu
 fi
 #---------------------------------------------
+
+#-----------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------#
+#SEARCH RECORDS
+elif [[ "$choice" -eq 4 ]]
+then
+./display_pharmacy
 
 else
 echo "Incorrect Entry"
