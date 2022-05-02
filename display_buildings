@@ -1,3 +1,14 @@
+#Regex Check
+name_regex="[^a-zA-Z ]+"
+address_regex="[^a-zA-Z0-9 ]+"
+no_of_rooms_regex="[^0-9]+"
+doc_office_regex="[^0-9]+"
+manager_regex="[^a-zA-Z ]+"
+room_type_regex="[^a-zA-Z ]+"
+year_regex="[^0-9]+"
+status_regex="[^a-zA-Z ]+"
+department_regex="[^a-zA-Z ]+"
+
 echo "Select your choice"
 echo "1. Search by address"
 echo "2. Search by building manager"
@@ -13,6 +24,11 @@ echo "Enter the address"
 read address
 
 #address validation remaining
+if [[ "$address" =~ $address_regex ]]
+then
+echo "Please enter a valid address"
+exit 1
+fi
 
 awk -F, -v address="$address" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($3 == address) {
     printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", $1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
@@ -23,6 +39,12 @@ then
 echo "Enter the building manager's name"
 read name
 
+if [[ "$name" =~ $manager_regex ]]
+then
+echo "Please enter a valid Valid name"
+exit 1
+fi
+
 awk -F, -v name="$name" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($5 == name) {
     printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n",$1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
 
@@ -31,6 +53,12 @@ elif [[ $choice -eq 3 ]]
 then
 echo "Enter the constructed year"
 read year
+
+if [[ "$year" =~ $year_regex ]]
+then
+echo "Please enter a valid year name"
+exit 1
+fi
 
 awk -F, -v year="$year" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($6 == year) {
     printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n",$1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
@@ -41,6 +69,11 @@ then
 echo "Enter the building name"
 read building_name
 
+if [[ "$building_name" =~ $name_regex ]]
+then
+echo "Please enter a valid buidling name"
+exit 1
+fi
 awk -F, -v building_name="$building_name" 'NR==1 {printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n\n",$1,$2,$3,$4,$5,$6,$7;}; {if($2 == building_name) {
     printf "%20s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n",$1,$2,$3,$4,$5,$6,$7;}}' buildings.csv
 fi
